@@ -1,0 +1,40 @@
+﻿,P [W],v [mm/s],t [µm],h [µm],UTS [Mpa],YS [Mpa],YM [Gpa],Elong [%],microhard[HV],,
+Sun (2017),96,900,25,,1093,1025,,,,Concept,"Powder morphology, "
+Soro (2019),95,950,30,100,,978,108,,,Concept,"Ultimate strain, biomedical implants, scanning strategies, manufacturing irregularities"
+Wang (2016),95,900,30,,,,90,,,Concept,"bar chart with untreated and heat treated YM (GPa) and hardness. SLM manufacturing process visual schematic, surface roughness, biocompatibility discussions, cell adhesion, wettability"
+Kasperovich (2015),200,1250,40,,1051,736,109.9,11.9,360,Concept,"Extensive porosity investigation, microhardness, heat treatment, fatigue behaviour"
+Wang (2022),200,1200,30,140,,,113,,,Concept,"Trabecular Acetabular Cup, chemical composition of powder"
+Wang (2015),150,214,70,,,,115.4,,,ARCAM,"Chemical composition, hardness, "
+Wang (2015),150,376,70,,,,116.3,,,ARCAM,
+Wang (2015),150,529,70,,,,119,,,ARCAM,
+Wang (2015),150,689,70,,,,114.3,,,ARCAM,
+Facchini (2010),195,225,,,1095,990,110,8.1,,EOS,Has powder morphology
+Yasin (2020),291.2,1200,30,143.4,1166.45,1143.23,,12.94,360,EOS,Hardness
+Yasin (2020),291.2,1200,30,140,1164.24,1127.37,,11.83,370,EOS,
+Yasin (2020),280,1200,30,143.4,1145.44,1098.25,,11.91,370,EOS,
+Yasin (2020),280,1200,30,140,1148.81,1104.88,,11.87,370,EOS,
+Yasin (2020),280,1200,30,136.6,1145.81,1101.57,,10.84,370,EOS,
+Yasin (2020),268.8,1200,30,140,1159.82,1130.69,,13.16,360,EOS,
+Yasin (2020),268.8,1200,30,143.4,1157.24,1120.37,,11.91,370,EOS,
+Mezzetta (2018),180,1250,30,70,1100,1000,,7.5,379,Concept,"Alloy composition, microhardness, porosity, different heat treatments"
+Huang (2015),200,500,150,150,1191,970,,5.37,,Renishaw,"Biomedical applications, heat treatment"
+Voisin (2018),100,600,100,105,1230,1110,,,,concept ,"multi-scale properties graphical abstract, SXRD + SXCT scans, chemical composition of powder, pore formation model, heat treatments, EBSD images"
+Voisin (2018),250,1600,100,70,1420,1320,,,,concept,
+Fan (2023),95,900,30,77,1138,943,106,9.2,,concept,SEM images of cold cracks + grains
+Simonelli (2014),157,225,50,100,1199,1075,113,7.6,,Renishaw,Phase EBSD scans
+Gong (2015),120,960,30,100,1237,1098,109,8.8,,EOS,Discusses optimal parameters denoted OP. Comparison of SLM and EBM mech props. Has fatigue life
+Gong (2015),120,540,30,100,1257,1150,111,8,,EOS,
+Gong (2015),120,400,30,100,1148,1066,109,5.4,,EOS,
+Gong (2015),120,1260,30,100,1112,932,95,6.6,,EOS,
+Gong (2015),120,1500,30,100,978,813,84,3.7,,EOS,
+Xu (2015),175,710,30,120,1160,991.7,,8.93,,SLM250,
+Xu (2015),375,1029,60,120,1300,1109.8,,11.27,,SLM251,
+Vrancken (2012),250,1600,30,60,1267,1110,109.2,7.28,,LMQ SLM,
+Vandenbroucke (2007),95,90,30,100,1200,1050,91,5.5,413.49,concept,"Grain size distribution, vickers hardness, corrosion rates, top + side roughness, dental prosthesis + build time per framework"
+Vandenbroucke (2007),95,140,30,120,1250,1125,94,6,410,concept,
+Vandenbroucke (2007),95,190,30,140,1300,1200,96,6.3,386.51,concept,
+Qiu (2013),150,800,20,75,1173.91,1034.8,,8.2,,concept,"porosity,  SEM images"
+Qiu (2013),150,800,20,75,1173.91,1034.8,,8.2,,concept,
+D.K.Do (2016),120,800,50,80,,,,,403,SLM,
+D.K.Do (2016),120,400,50,80,,,,,416,SLM,
+D.K.Do (2016),120,200,50,80,,,,,444,SLM,
