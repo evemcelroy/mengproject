@@ -1,5 +1,7 @@
-# CTRL+/ COMMENT OUT
-# SHIFT f10 RUN
+# SHORTCUTS
+# CTRL +/ comment out
+# CTRL 0/ uncomment
+# SHIFT F10 run
 
 # Import  Libraries
 import pandas as pd
@@ -8,6 +10,7 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.neighbors import KNeighborsRegressor
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.impute import SimpleImputer
 import seaborn as sns
@@ -49,12 +52,11 @@ targets = ["UTS_[Mpa]", "YS_[Mpa]", "YM_[Gpa]", "Elong_[%]", "Microhard_[HV]"]
 # for test_size in test_size_range:
 #     print(f"Testing with test_size={test_size}, random_state={rnd_state}")
 #     mse_list, r2_list = [], []
-
 # for target in targets:
 #     X = data[input_features]
 #     y = data[target]
 
-# # Plot Predicted v Actual
+# Plot Predicted v Actual
 fig, axes = plt.subplots(3, 2, figsize=(12, 10))
 fig.suptitle("Model predictions", fontsize=18)
 
@@ -83,9 +85,12 @@ for i, target in enumerate(targets):
         ).ravel()
     y_test = imputer.transform(y_test.values.reshape(-1, 1)).ravel()
 
-    ### CHOOSE ML REGRESSION MODEL ###
-    regressor = RandomForestRegressor(random_state=42)
-    # regressor = DecisionTreeRegressor(random_state=42)
+    # Choose ML Regression Model
+    regressor = DecisionTreeRegressor(random_state=42)
+    # regressor = RandomForestRegressor(random_state=42)
+    # regressor = GradientBoostingRegressor(random_state=42)
+    # regressor = KNeighborsRegressor(n_neighbors=5)
+
     regressor.fit(X_train, y_train)
 
     # Predict on the test set
