@@ -17,13 +17,24 @@ from sklearn.neighbors import KNeighborsRegressor
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.impute import SimpleImputer
 import seaborn as sns
-import builtins  # Optimisation
+import builtins
+import datetime
 
 # Optimisation
 # Redirect print to the file
 # def print_to_file(*args, **kwargs):
 #     with open("optimisation.txt", "a") as file:
 #         builtins.print(*args, **kwargs, file=file)
+
+
+def print_to_file(*args, **kwargs):
+    with open("output.txt", "a") as file:
+        builtins.print(*args, **kwargs, file=file)
+
+
+print_to_file("ML to Determine Mechanical Properties of AMM")
+print_to_file(f"Date and Time: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+print_to_file("Author: Eve McElroy\n")
 
 data = pd.read_csv("py_input_v1.csv")
 data.columns = (
@@ -34,9 +45,21 @@ data["E_[J/mm^3]"] = data["P_[W]"] / (
     data["v_[mm/s]"] * data["t_[µm]"] * data["h_[µm]"]
 )
 
+# Specify powder grade for analysis
+# filtered_data = data[data["Grade"] == 5].copy()  # Grade 5 only
+# filtered_data = data[data["Grade"] == 23].copy()  # Grade 23 only
+filtered_data = data  # Both grades
+
+# filtered_data = data[data["Machine"] == "Concept"].copy()
+# filtered_data = data[data["Machine"] == "EOS"].copy()
+
+
 # Summary Statistics
 pd.set_option("display.max_columns", None)
 print(data.describe())
+print_to_file("Summary Statistics:")
+print_to_file(data.describe())
+print_to_file("\n" + "=" * 50 + "\n")
 
 # Correlation Matrix
 numeric_columns = data.select_dtypes(include=[np.number])
@@ -46,20 +69,24 @@ plt.figure(figsize=(10, 8))
 sns.heatmap(correlation_matrix, annot=True, fmt=".2f", cmap="coolwarm", square=True)
 plt.title("Correlation Matrix Heatmap")
 plt.show()
+print_to_file("Correlation Matrix:")
+print_to_file(correlation_matrix)
+print_to_file("\n" + "=" * 50 + "\n")
 
-########################################################################################################################
 # PSD Curves
 percentiles = [10, 50, 90]
 percentile_columns = [f"D{p}_[µm]" for p in percentiles]
 plt.figure(figsize=(10, 6))
 x_values = np.linspace(
-    data[percentile_columns].min().min(), data[percentile_columns].max().max(), 1000
+    filtered_data[percentile_columns].min().min(),
+    filtered_data[percentile_columns].max().max(),
+    1000,
 )
 for col in percentile_columns:
     curve_color = (
         "#FFAE90" if "D10" in col else ("#EF39A7" if "D50" in col else "#2494CC")
     )
-    mean, std = data[col].mean(), data[col].std()
+    mean, std = filtered_data[col].mean(), filtered_data[col].std()
     plt.plot(
         x_values,
         norm.pdf(x_values, mean, std),
@@ -74,7 +101,7 @@ plt.legend()
 plt.grid(False)
 plt.tight_layout()
 plt.show()
-########################################################################################################################
+
 # D10 D50 D90
 bins_d10 = [5, 10, 15, 20, 25]
 bins_d50 = [10, 20, 30, 40]
@@ -85,7 +112,7 @@ for i, col in enumerate(percentile_columns):
         "#FFAE90" if "D10" in col else ("#EF39A7" if "D50" in col else "#2494CC")
     )
     n, bins, patches = axes[i].hist(
-        data[col],
+        filtered_data[col],
         bins=bins_d10 if "D10" in col else (bins_d50 if "D50" in col else bins_d90),
         align="left",
         rwidth=0.4,
@@ -96,7 +123,7 @@ for i, col in enumerate(percentile_columns):
     axes[i].set_xticklabels(
         [f"{int(value)}-{int(value + bins[1])}" for value in bins[:-1]]
     )
-    average_value = data[col].mean()
+    average_value = filtered_data[col].mean()
     axes[i].axhline(
         average_value,
         color=bar_color,
@@ -111,7 +138,7 @@ for i, col in enumerate(percentile_columns):
     axes[i].legend(loc="upper left")
 plt.tight_layout()
 plt.show()
-########################################################################################################################
+
 # Combined D10_50_90
 bins_combined = list(range(0, 101, 10))  # Bins in increments of 10 microns
 bar_width = 0.25
@@ -121,14 +148,14 @@ for i, col in enumerate(percentile_columns):
         "#FFAE90" if "D10" in col else ("#EF39A7" if "D50" in col else "#2494CC")
     )
     n, bins, patches = ax.hist(
-        data[col],
+        filtered_data[col],
         bins=bins_combined,
         align="left",
         rwidth=0.8,
         color=bar_color,
         label=f"{col}",
     )
-    average_value = data[col].mean()
+    average_value = filtered_data[col].mean()
     ax.axhline(
         average_value,
         color=bar_color,
@@ -147,7 +174,6 @@ ax.legend()
 ax.grid(False)
 plt.tight_layout()
 plt.show()
-########################################################################################################################
 
 # Define all input features + target variables
 input_features = ["P_[W]", "v_[mm/s]", "t_[µm]", "h_[µm]", "E_[J/mm^3]"]
@@ -174,8 +200,8 @@ all_feature_importances = []
 for i, target in enumerate(targets):
     print(f"Model for target variable: {target}")
 
-    X = data[input_features]
-    y = data[target]
+    X = filtered_data[input_features]
+    y = filtered_data[target]
 
     # Split data into train/test sets
     X_train, X_test, y_train, y_test = train_test_split(
@@ -208,6 +234,10 @@ for i, target in enumerate(targets):
     # Evaluation Metrics
     mse = mean_squared_error(y_test, y_pred)
     r2 = r2_score(y_test, y_pred)
+    print_to_file(f"\nEvaluation Metrics for {target}:")
+    print_to_file(f"R-squared: {r2:.2f}")
+    print_to_file(f"MSE: {mse:.2f}")
+    print_to_file("\n" + "=" * 50 + "\n")
 
     #     mse_list.append(mse)
     #     r2_list.append(r2)
@@ -242,8 +272,10 @@ for i, target in enumerate(targets):
     # Pair feature names with their importances and print
     feature_importance_dict = dict(zip(input_features, feature_importances))
     print("Feature Importances:")
+    print_to_file(f"Feature Importances for {target}:")
     for feature, importance in feature_importance_dict.items():
         print(f"{feature}: {importance}")
+    print_to_file("\n" + "=" * 50 + "\n")
 
     # Plot
     row = i // 2
