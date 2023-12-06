@@ -6,10 +6,13 @@
 # Import  Libraries
 import pandas as pd
 import numpy as np
+from scipy.stats import norm
 import matplotlib.pyplot as plt
+from sklearn.gaussian_process import GaussianProcessRegressor
+from sklearn.linear_model import MultiTaskLasso, ElasticNet
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.impute import SimpleImputer
@@ -39,6 +42,108 @@ plt.figure(figsize=(10, 8))
 sns.heatmap(correlation_matrix, annot=True, fmt=".2f", cmap="coolwarm", square=True)
 plt.title("Correlation Matrix Heatmap")
 plt.show()
+
+########################################################################################################################
+# PSD Curves
+percentiles = [10, 50, 90]
+percentile_columns = [f"D{p}_[µm]" for p in percentiles]
+plt.figure(figsize=(10, 6))
+x_values = np.linspace(
+    data[percentile_columns].min().min(), data[percentile_columns].max().max(), 1000
+)
+for col in percentile_columns:
+    curve_color = (
+        "#FFAE90" if "D10" in col else ("#EF39A7" if "D50" in col else "#2494CC")
+    )
+    mean, std = data[col].mean(), data[col].std()
+    plt.plot(
+        x_values,
+        norm.pdf(x_values, mean, std),
+        color=curve_color,
+        linewidth=2,
+        label=f"{col}",
+    )
+plt.title("Particle Size Distribution Curves")
+plt.xlabel("Particle Size (µm)")
+plt.ylabel("Frequency")
+plt.legend()
+plt.grid(False)
+plt.tight_layout()
+plt.show()
+########################################################################################################################
+# D10 D50 D90
+bins_d10 = [5, 10, 15, 20, 25]
+bins_d50 = [10, 20, 30, 40]
+bins_d90 = [20, 30, 40, 50, 60]
+fig, axes = plt.subplots(3, 1, figsize=(7, 15))
+for i, col in enumerate(percentile_columns):
+    bar_color = (
+        "#FFAE90" if "D10" in col else ("#EF39A7" if "D50" in col else "#2494CC")
+    )
+    n, bins, patches = axes[i].hist(
+        data[col],
+        bins=bins_d10 if "D10" in col else (bins_d50 if "D50" in col else bins_d90),
+        align="left",
+        rwidth=0.4,
+        alpha=0.9,
+        color=bar_color,
+    )
+    axes[i].set_xticks(bins[:-1] + 0.2)
+    axes[i].set_xticklabels(
+        [f"{int(value)}-{int(value + bins[1])}" for value in bins[:-1]]
+    )
+    average_value = data[col].mean()
+    axes[i].axhline(
+        average_value,
+        color=bar_color,
+        linestyle="--",
+        linewidth=2,
+        label=f"Average {col}: {average_value:.2f}",
+    )
+    axes[i].set_title(f"PSD - {col}")
+    axes[i].set_xlabel("Particle Size (µm)")
+    axes[i].set_ylabel("Frequency (count)")
+    axes[i].grid(False)
+    axes[i].legend(loc="upper left")
+plt.tight_layout()
+plt.show()
+########################################################################################################################
+# Combined D10_50_90
+bins_combined = list(range(0, 101, 10))  # Bins in increments of 10 microns
+bar_width = 0.25
+fig, ax = plt.subplots(figsize=(12, 6))
+for i, col in enumerate(percentile_columns):
+    bar_color = (
+        "#FFAE90" if "D10" in col else ("#EF39A7" if "D50" in col else "#2494CC")
+    )
+    n, bins, patches = ax.hist(
+        data[col],
+        bins=bins_combined,
+        align="left",
+        rwidth=0.8,
+        color=bar_color,
+        label=f"{col}",
+    )
+    average_value = data[col].mean()
+    ax.axhline(
+        average_value,
+        color=bar_color,
+        linestyle="--",
+        linewidth=2,
+        label=f"Average {col}: {average_value:.2f}",
+    )
+ax.set_xticks(bins_combined[:-1] + [bins_combined[-1]])
+ax.set_xticklabels(
+    [f"{value}-{value + 10}" for value in bins_combined[:-1]] + [f"{bins_combined[-1]}"]
+)
+ax.set_title("Particle Size Distribution")
+ax.set_xlabel("Particle Size (µm)")
+ax.set_ylabel("Frequency (count)")
+ax.legend()
+ax.grid(False)
+plt.tight_layout()
+plt.show()
+########################################################################################################################
 
 # Define all input features + target variables
 input_features = ["P_[W]", "v_[mm/s]", "t_[µm]", "h_[µm]"]
@@ -70,7 +175,7 @@ for i, target in enumerate(targets):
 
     # Split data into train/test sets
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.15, random_state=42
+        X, y, test_size=0.125, random_state=42
     )
 
     # Imputation Method
@@ -86,8 +191,8 @@ for i, target in enumerate(targets):
     y_test = imputer.transform(y_test.values.reshape(-1, 1)).ravel()
 
     # Choose ML Regression Model
-    regressor = DecisionTreeRegressor(random_state=42)
-    # regressor = RandomForestRegressor(random_state=42)
+    # regressor = DecisionTreeRegressor(random_state=42)
+    regressor = RandomForestRegressor(random_state=42)
     # regressor = GradientBoostingRegressor(random_state=42)
     # regressor = KNeighborsRegressor(n_neighbors=5)
 
