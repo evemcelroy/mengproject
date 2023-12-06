@@ -29,6 +29,10 @@ data = pd.read_csv("py_input_v1.csv")
 data.columns = (
     data.columns.str.strip().str.replace(" ", "_").str.replace("[^\w\s]", "")
 )  # removes spaces + special chars
+# Calculate energy density and add it to the DataFrame
+data["E_[J/mm^3]"] = data["P_[W]"] / (
+    data["v_[mm/s]"] * data["t_[µm]"] * data["h_[µm]"]
+)
 
 # Summary Statistics
 pd.set_option("display.max_columns", None)
@@ -146,7 +150,7 @@ plt.show()
 ########################################################################################################################
 
 # Define all input features + target variables
-input_features = ["P_[W]", "v_[mm/s]", "t_[µm]", "h_[µm]"]
+input_features = ["P_[W]", "v_[mm/s]", "t_[µm]", "h_[µm]", "E_[J/mm^3]"]
 targets = ["UTS_[Mpa]", "YS_[Mpa]", "YM_[Gpa]", "Elong_[%]", "Microhard_[HV]"]
 
 # Optimisation
